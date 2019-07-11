@@ -1,0 +1,17 @@
+Usage:
+  rails generate domain NAME [DOMAIN] [options]
+
+Options:
+      [--skip-namespace], [--no-skip-namespace]  # Skip namespace (affects only isolated applications)
+      [--include-dry], [--no-include-dry]        # Generate classes with dry-monads
+                                                 # Default: true
+  -mo, [--model=MODEL]                           # Generate Model class with specs
+  -as, [--app-service=APP_SERVICE]               # Generate App Service class with specs
+  -se, [--service=SERVICE]                       # Generate Service class with spec
+  -re, [--repository=REPOSITORY]                 # Generate Repository class with spec, will use Model name by default if provided.
+
+Description:
+    `rails generate domain PetManagement -as RegisterPet`
+
+    This will create:
+        app/domain/pet_management/app_services/register_pet.rb

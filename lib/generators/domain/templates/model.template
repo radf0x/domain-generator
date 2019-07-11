@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+class <%= name %>::Services::Models::<%= options.model %>
+
+  # attr_reader :x, :y
+
+  def initialize(*attrs)
+    # TODO: init
+  end
+
+  def to_h
+    {}
+  end
+end

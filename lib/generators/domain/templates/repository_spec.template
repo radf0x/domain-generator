@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+
+RSpec.describe <%= name %>::Infrastructures::Repos::<%= options.model %> do
+<% if options.include_dry? -%>
+  include Dry::Monads::Result::Mixin
+<% end -%>
+
+  pending "add some examples to (or delete) #{__FILE__}"
+end

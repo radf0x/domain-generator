@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+FactoryBot.define do
+  factory <%= options.model.underscore.to_sym %>, class: '<%= name %>::Services::Models::<%= options.model %>' do
+    skip_create
+    # initialize_with { new(attrs) }
+  end
+end

@@ -1,0 +1,57 @@
+# frozen_string_literal: true
+
+class <%= name %>::Infrastructures::Repos::<%= options.model %>
+<% if options.include_dry? -%>
+  include ::Dry::Monads::Result::Mixin
+  include ::Dry::Monads::Maybe::Mixin
+  include ::Dry::Monads::Try::Mixin
+<% end -%>
+
+  def initialize
+    @model = <%= options.model %>
+  end
+
+  def get_transaction(&block)
+    @model.transaction(&block)
+  end
+
+  # @param id: Number
+  # @return Success(<%= name %>::Services::Models::<%= options.model %>) | Failure(::Commons::FailureConstant::RecordNotFound)
+  def find_by_id(id:)
+    Maybe(@model.find_by(id: id))
+      .bind { |u| Success(u) }
+      .or(Failure(::Commons::FailureConstant::RecordNotFound.new))
+  end
+
+  # @param **attr: Any
+  # @return Success(<%= name %>::Services::Models::<%= options.model %>) | Failure(::Commons::FailureConstant::RecordNotFound)
+  def find_by_attr(**attr)
+    Maybe(@model.find_by(attr))
+      .bind { |u| Success(u) }
+      .or(Failure(::Commons::FailureConstant::RecordNotFound.new))
+  end
+
+  # @param user: <%= name %>::Services::Models::<%= options.model %>
+  # @return Success(<%= name %>::Services::Models::<%= options.model %>) | Failure(::Commons::FailureConstant::RecordInvalid)
+  def save(user)
+    Try(ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved) do
+      user.save!
+      user.reload
+    end.to_result.or do |failure|
+      Rails.logger.error "[user][user_repository] #save #{failure.to_s}, user: #{user.inspect}"
+      Failure(::Commons::FailureConstant::RecordInvalid.new(extras: "reason: #{failure.to_s}"))
+    end
+  end
+
+  # @param user: <%= name %>::Services::Models::<%= options.model %>
+  # @return Success(<%= name %>::Services::Models::<%= options.model %>) | Failure(::Commons::FailureConstant::RecordInvalid)
+  def update(user:, **params)
+    Try(ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActiveModel::UnknownAttributeError) do
+      user.update!(params)
+      user.reload
+    end.to_result.or do |failure|
+      Rails.logger.error "[user][user_repository] #save #{failure.to_s}, user: #{user.inspect}"
+      Failure(::Commons::FailureConstant::RecordInvalid.new(extras: "reason: #{failure.to_s}"))
+    end
+  end
+end

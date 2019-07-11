@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+class <%= name %>::AppServices::<%= options.app_service %>
+<% if options.include_dry? -%>
+  include Dry::Monads::Result::Mixin
+  include Dry::Monads::Do::All
+<% end -%>
+
+  def initialize
+    # TODO: dependency injection
+  end
+
+  def call
+    raise NotImplementedError, "you need implement this"
+  end
+end
